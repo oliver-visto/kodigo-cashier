@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\ItemRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
+
 
 /**
- * Class UserCrudController
+ * Class ItemCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class UserCrudController extends CrudController
+
+class ItemCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +29,9 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
+        CRUD::setModel(\App\Models\Item::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/item');
+        CRUD::setEntityNameStrings('item', 'items');
     }
 
     /**
@@ -40,8 +43,8 @@ class UserCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::column('name');
-        CRUD::column('email');
-        CRUD::column('password');
+        CRUD::column('description');
+        CRUD::column('category');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -58,13 +61,9 @@ class UserCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::field('name')->validationRules('required|min:5');
-          CRUD::field('email')->validationRules('required|email|unique:users,email');
-          CRUD::field('password')->validationRules('required');
-
-          \App\Models\User::creating(function ($entry) {
-              $entry->password = \Hash::make($entry->password);
-          });
+        CRUD::field('name');
+        CRUD::field('description');
+        CRUD::field('category');
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -81,16 +80,6 @@ class UserCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        CRUD::field('name')->validationRules('required|min:5');
-          CRUD::field('email')->validationRules('required|email|unique:users,email,'.CRUD::getCurrentEntryId());
-          CRUD::field('password')->hint('Type a password to change it.');
-
-          \App\Models\User::updating(function ($entry) {
-              if (request('password') == null) {
-                  $entry->password = $entry->getOriginal('password');
-              } else {
-                  $entry->password = \Hash::make(request('password'));
-              }
-          });
+        $this->setupCreateOperation();
     }
 }
