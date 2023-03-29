@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+// use Laravel\Cashier\Http\Controllers\PaymentController as ControllersPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::group(['prefix'=>'auth'],function(){
     Route::post('signup',[AuthenticationController::class,'signup']);
